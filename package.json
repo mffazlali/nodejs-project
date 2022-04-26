@@ -1,0 +1,30 @@
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start-node-demo": "node --experimental-modules --es-module-specifier-resolution=node projects/demo/app.js",
+    "start-node-args-demo": "node --experimental-modules --es-module-specifier-resolution=node projects/demo/app.js read --t='ali' --body='test' --help",
+    "start-node-debugging-demo": "node --experimental-modules --es-module-specifier-resolution=node --inspect-brk projects/demo/app.js",
+    "start-nodemon-demo": "nodemon --experimental-modules --es-module-specifier-resolution=node projects/demo/app.js",
+    "start-nodemon-args-demo": "nodemon --experimental-modules --es-module-specifier-resolution=node projects/demo/app.js remove --title='ali' --body='test2'",
+    "start-nodemon-debugging-demo": "nodemon --experimental-modules --es-module-specifier-resolution=node --inspect-brk projects/demo/app.js add --title='ali' --body='test'",
+    "start-node-weatherApp": "node --experimental-modules --es-module-specifier-resolution=node projects/weather-app/app.js --address='1201'",
+    "start-nodemon-weatherApp": "nodemon --experimental-modules --es-module-specifier-resolution=node projects/weather-app/app.js  --address='4225'",
+    "start-nodemon-webServer": "nodemon --experimental-modules --es-module-specifier-resolution=node projects/web-server/app.js "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "express": "^4.17.3",
+    "hbs": "^4.2.0",
+    "lodash": "^4.17.21",
+    "nodemon": "^2.0.15",
+    "request": "^2.88.2",
+    "yargs": "^17.2.1"
+  }
+}

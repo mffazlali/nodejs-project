@@ -16,9 +16,13 @@ demoService.getNotFoundPage()
 demoService.getHelpPage()
 demoService.getAboutPage()
 
-app.listen(3000,()=>{
-    console.log('server run in port 3000')
+app.listen(3000, () => {
+    console.log('server run on port 3000')
 });
+
+export let app2 = {
+    app
+}
 
 
 

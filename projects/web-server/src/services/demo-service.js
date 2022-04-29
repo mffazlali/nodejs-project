@@ -9,7 +9,7 @@ export class DemoService {
         this.app.set('views', 'projects/web-server/src/views');
         this.app.set('view engine', 'hbs');
         hbs.registerPartials('projects/web-server/src/views/partials');
-        hbs.registerHelper('getCurrentData',()=> new Date())
+        hbs.registerHelper('getCurrentData', () => new Date())
     }
 
     getHomePage = () => {
@@ -20,7 +20,7 @@ export class DemoService {
 
     getJson = () => {
         this.app.get('/json', (req, res) => {
-            res.send({name: 'ali', webSite: ['google', 'yahoo']})
+            res.status(200).send([{name: 'google', address: 'google.com'}, {name: 'yahoo', address: 'yahoo.com'}])
         })
     }
 

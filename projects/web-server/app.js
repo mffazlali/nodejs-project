@@ -1,15 +1,15 @@
 import express from 'express'
-import {DemoService} from './src/services/index'
+import {DemoWebService} from './src/webServices/index'
 
 let app = express();
-let demoService = new DemoService(app);
+let demoService = new DemoWebService(app);
 app.use((req, res, next) => {
     console.log(`${new Date()} : ${req.method} ,${req.url}`)
     next();
 })
-// app.use((req, res, next) => {
-//     res.render('offline');
-// })
+app.use((req, res) => {
+    res.render('offline');
+})
 demoService.getHomePage()
 demoService.getJson()
 demoService.getNotFoundPage()

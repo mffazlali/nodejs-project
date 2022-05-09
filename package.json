@@ -2,7 +2,7 @@
   "name": "my-project",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "app.ts",
   "scripts": {
     "start-node-demo": "node --experimental-modules --es-module-specifier-resolution=node projects/demo/app.js",
     "start-node-args-demo": "node --experimental-modules --es-module-specifier-resolution=node projects/demo/app.js read --t='ali' --body='test' --help",
@@ -12,12 +12,13 @@
     "start-nodemon-debugging-demo": "nodemon --experimental-modules --es-module-specifier-resolution=node --inspect-brk projects/demo/app.js add --title='ali' --body='test'",
     "start-node-weatherApp": "node --experimental-modules --es-module-specifier-resolution=node projects/weather-app/app.js --address='1201'",
     "start-nodemon-weatherApp": "nodemon --experimental-modules --es-module-specifier-resolution=node projects/weather-app/app.js  --address='4225'",
-    "start-nodemon-webServer": "nodemon --experimental-modules --es-module-specifier-resolution=node projects/web-server/app.js ",
+    "start-nodemon-webServer": "nodemon --experimental-modules --es-module-specifier-resolution=node projects/web-server/app.js",
+    "start-node-applicationServer": "ts-node -e \"import myLib from './projects/application-server/app'; myLib.app()\"",
+    "start-nodemon-applicationServer": "nodemon --exec ts-node ./projects/application-server/app.ts",
     "test-weatherApp": "mocha projects/weather-app/**/*.test.js --experimental-modules --es-module-specifier-resolution=node",
     "test-watch-weatherApp": "nodemon --exec \"npm run test-weatherApp\" --experimental-modules --es-module-specifier-resolution=node",
     "test-webServer": "mocha projects/web-server/**/*.test.js --experimental-modules --es-module-specifier-resolution=node",
     "test-watch-webServer": "nodemon --exec \"npm run test-webServer\" --experimental-modules --es-module-specifier-resolution=node"
-
   },
   "keywords": [],
   "author": "",
@@ -30,8 +31,9 @@
     "hbs": "^4.2.0",
     "lodash": "^4.17.21",
     "mocha": "^9.2.2",
-    "nodemon": "^2.0.15",
+    "mongodb": "^4.5.0",
     "request": "^2.88.2",
+    "run-func": "^3.0.0",
     "supertest": "^6.2.3",
     "yargs": "^17.2.1"
   }

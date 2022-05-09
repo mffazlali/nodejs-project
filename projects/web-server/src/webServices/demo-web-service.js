@@ -1,7 +1,7 @@
 import express from 'express'
 import hbs from 'hbs'
 
-export class DemoService {
+export class DemoWebService {
     app = null;
 
     constructor(express) {

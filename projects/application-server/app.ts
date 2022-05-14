@@ -1,6 +1,9 @@
 // import {ActionController, UserController} from './src/controller'
 // import {ActionType, UserType} from "./src/models";
 import {serverService} from './src/services'
+import express from "express";
+
+let appExpress = express();
 
 let app = async () => {
     // let userData: UserType = {age: 32, location: 'tehran', name: 'ali'}
@@ -21,13 +24,13 @@ let app = async () => {
     // await userController.update(userData).then(r => console.log(`update users: ${JSON.stringify(r)}`));
     // await userController.delete('6278fa81ac032d291a7ad28f').then(r => console.log(`delete users: ${JSON.stringify(r)}`));
     // await userController.readAll().then(r => console.log(`readAll users: ${JSON.stringify(r)}`));
-
-    serverService();
+    serverService(appExpress);
 }
 
 app().then();
 
 export default {app: app}
+export {appExpress};
 
 
 

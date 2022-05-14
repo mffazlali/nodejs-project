@@ -1,5 +1,6 @@
 import {Express} from 'express';
 import {ActionMongooseController} from '../controller'
+import {ObjectId} from "mongodb";
 
 export class ActionWebService {
     private app: Express;
@@ -27,7 +28,9 @@ export class ActionWebService {
 
     private fetch = () => {
         this.app.get('/fetchaction', (req, res) => {
-            req.query
+            if (!ObjectId.isValid(req.query['_id'] as string)) {
+                res.status(400).send();
+            }
             this.actionMongooseController.read(req.query).then(r => {
                 res.send(r);
             }).catch(e => {
@@ -47,7 +50,10 @@ export class ActionWebService {
     }
 
     private update = () => {
-        this.app.post('/updateaction', (req, res) => {
+        this.app.patch('/updateaction', (req, res) => {
+            if (!ObjectId.isValid(req.body._id)) {
+                res.status(400).send();
+            }
             this.actionMongooseController.update(req.body).then(r => {
                 res.send(r);
             }).catch(e => {
@@ -57,8 +63,12 @@ export class ActionWebService {
     }
 
     private delete = () => {
-        this.app.post('/deleteaction', (req, res) => {
-            this.actionMongooseController.delete(req.body).then(r => {
+        this.app.delete('/deleteaction/:id', (req, res) => {
+            const id = req.params.id;
+            if (!ObjectId.isValid(id)) {
+                res.status(400).send();
+            }
+            this.actionMongooseController.delete(new ObjectId(id)).then(r => {
                 res.send(r);
             }).catch(e => {
                 res.status(400).send(e);

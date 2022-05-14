@@ -1,3 +1,5 @@
+import {ObjectId} from "mongodb";
+
 export interface IController<T> {
     readAll(): Promise<any>;
 
@@ -7,5 +9,8 @@ export interface IController<T> {
 
     update(type: T): Promise<any>;
 
-    delete(id: string): Promise<any>;
+    delete(id: ObjectId): Promise<any>;
+
+    deleteAll?(): Promise<any>;
+
 }

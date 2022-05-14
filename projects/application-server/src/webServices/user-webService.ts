@@ -1,5 +1,6 @@
 import {Express} from 'express';
 import {UserMongooseController} from '../controller'
+import {ObjectId} from "mongodb";
 
 export class UserWebService {
     private app: Express;
@@ -27,7 +28,9 @@ export class UserWebService {
 
     private fetch = () => {
         this.app.get('/fetchuser', (req, res) => {
-            req.query
+            if (!ObjectId.isValid(req.query['_id'] as string)) {
+                res.status(400).send();
+            }
             this.userMongooseController.read(req.query).then(r => {
                 res.send(r);
             }).catch(e => {
@@ -47,7 +50,10 @@ export class UserWebService {
     }
 
     private update = () => {
-        this.app.post('/updateuser', (req, res) => {
+        this.app.patch('/updateuser', (req, res) => {
+            if (!ObjectId.isValid(req.body._id)) {
+                res.status(400).send();
+            }
             this.userMongooseController.update(req.body).then(r => {
                 res.send(r);
             }).catch(e => {
@@ -57,7 +63,11 @@ export class UserWebService {
     }
 
     private delete = () => {
-        this.app.post('/deleteuser', (req, res) => {
+        this.app.delete('/deleteuser/:id', (req, res) => {
+            const id = req.params.id;
+            if (!ObjectId.isValid(id)) {
+                res.status(400).send();
+            }
             this.userMongooseController.delete(req.body).then(r => {
                 res.send(r);
             }).catch(e => {

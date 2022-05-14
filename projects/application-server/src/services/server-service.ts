@@ -1,12 +1,11 @@
 import dotenv from "dotenv";
-import express from "express";
 import bodyParser from "body-parser";
 import {ActionWebService, UserWebService} from "../webServices";
+import {Express} from "express";
 
-let serverService = () => {
+let serverService = (app:Express) => {
     dotenv.config();
     const port = process.env.PORT;
-    let app = express();
     app.use(bodyParser.json());
 
     new ActionWebService(app);

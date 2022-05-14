@@ -2,6 +2,7 @@ import {IController} from "./IController";
 import {ActionType, schemaObject, UserType} from "../models";
 import {mongoose, MongooseConnectionDb} from "../db/mongooseConnection-db";
 import {Model, Schema} from "mongoose";
+import {ObjectId} from "mongodb";
 
 export class ControllerMongooseImpl<Type extends ActionType | UserType> implements IController<Type> {
     private readonly collectionName: string;
@@ -52,10 +53,19 @@ export class ControllerMongooseImpl<Type extends ActionType | UserType> implemen
         return result;
     }
 
-    delete = async (objectId: any) => {
+    delete = async (objectId: ObjectId) => {
         await this.mongooseConnectionDb.connect()
         const result = await this.entityModel.deleteOne({_id: objectId});
         await this.mongooseConnectionDb.close();
         return result;
     }
+
+    deleteAll = async () => {
+        await this.mongooseConnectionDb.connect()
+        const result = await this.entityModel.deleteMany();
+        await this.mongooseConnectionDb.close();
+        return result;
+    }
+
+
 }

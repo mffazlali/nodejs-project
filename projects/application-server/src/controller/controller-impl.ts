@@ -41,9 +41,9 @@ export class ControllerImpl<Type extends ActionType | UserType> implements ICont
         return result;
     }
 
-    delete = async (id: string) => {
+    delete = async (id: ObjectId) => {
         await this.mongodbConnectionDb.connect();
-        const result = await this.mongodbConnectionDb.db.collection(this.collectionName).deleteOne({_id: new ObjectId(id)});
+        const result = await this.mongodbConnectionDb.db.collection(this.collectionName).deleteOne({_id: id});
         await this.mongodbConnectionDb.close();
         return result;
     }

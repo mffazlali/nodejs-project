@@ -3,7 +3,7 @@ import {ControllerImpl} from "./controller-impl";
 
 export class UserController extends ControllerImpl<UserType> {
     constructor() {
-        super('Users');
+        super('users');
     }
 }
 

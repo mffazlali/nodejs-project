@@ -1,24 +1,23 @@
 import {IController} from "./IController";
-import {ActionType, schemaObject, UserType} from "../models";
+import {ActionType, entitySchema, UserType} from "../models";
 import {mongoose, MongooseConnectionDb} from "../db/mongooseConnection-db";
 import {Model, Schema} from "mongoose";
 import {ObjectId} from "mongodb";
+import {ResultModel} from "../models/result-model";
 
 export class ControllerMongooseImpl<Type extends ActionType | UserType> implements IController<Type> {
     private readonly collectionName: string;
 
-    private mongooseConnectionDb: MongooseConnectionDb;
+    protected mongooseConnectionDb: MongooseConnectionDb;
 
-    private readonly schemaObject: any;
-
-    private readonly entityModel: Model<unknown, unknown, unknown, unknown>
+    protected readonly entityModel: Model<unknown, unknown, any, unknown>;
 
     constructor(collectionName: string) {
+        let schemaObjectTemp: any = entitySchema;
         this.mongooseConnectionDb = MongooseConnectionDb.getInstance('TodoApp');
         this.collectionName = collectionName;
-        this.schemaObject = schemaObject;
         if (!mongoose.models[this.collectionName]) {
-            this.entityModel = mongoose.model(this.collectionName, new Schema(this.schemaObject[this.collectionName]));
+            this.entityModel = mongoose.model(this.collectionName, schemaObjectTemp[this.collectionName]);
         } else {
             this.entityModel = mongoose.models[this.collectionName]
         }
@@ -48,16 +47,16 @@ export class ControllerMongooseImpl<Type extends ActionType | UserType> implemen
 
     update = async (dataType: Type) => {
         await this.mongooseConnectionDb.connect()
-        const result = await this.entityModel.updateOne({_id: dataType._id}, dataType);
+        const result = await this.entityModel.findOneAndUpdate({_id: dataType._id}, {$set: dataType}, {new: true});
         await this.mongooseConnectionDb.close();
         return result;
     }
 
     delete = async (objectId: ObjectId) => {
         await this.mongooseConnectionDb.connect()
-        const result = await this.entityModel.deleteOne({_id: objectId});
+        const result = await this.entityModel.findOneAndDelete({_id: objectId});
         await this.mongooseConnectionDb.close();
-        return result;
+        return Promise.resolve(result);
     }
 
     deleteAll = async () => {

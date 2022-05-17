@@ -1,15 +1,20 @@
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import {ActionWebService, UserWebService} from "../webServices";
-import {Express} from "express";
+import {Express, RequestHandler} from "express";
 
-let serverService = (app:Express) => {
+let serverService = (app: Express) => {
     dotenv.config();
     const port = process.env.PORT;
     app.use(bodyParser.json());
+    app.use((req, res, next) => {
+        next()
+    })
 
-    new ActionWebService(app);
-    new UserWebService(app);
+    let actionWebService = new ActionWebService();
+    let userWebService = new UserWebService();
+    app.use('/action', actionWebService.router);
+    app.use('/user', userWebService.router);
 
     app.listen(port, () => {
         console.log(`server run on port ${port}`)

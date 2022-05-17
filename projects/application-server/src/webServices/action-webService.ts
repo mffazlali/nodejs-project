@@ -1,13 +1,14 @@
-import {Express} from 'express';
+import {Express, Router} from 'express';
 import {ActionMongooseController} from '../controller'
 import {ObjectId} from "mongodb";
+import {ResultModel} from "../models/result-model";
 
 export class ActionWebService {
-    private app: Express;
+    public readonly router: Router;
     private actionMongooseController: ActionMongooseController;
 
-    constructor(express: Express) {
-        this.app = express;
+    constructor() {
+        this.router = Router();
         this.actionMongooseController = new ActionMongooseController();
         this.fetchAll();
         this.fetch();
@@ -17,62 +18,100 @@ export class ActionWebService {
     }
 
     private fetchAll = () => {
-        this.app.get('/fetchallaction', (req, res) => {
+        this.router.get('/fetchall', (req, res) => {
+            let result: ResultModel;
             this.actionMongooseController.readAll().then(r => {
-                res.send(r);
-            }).catch(e => {
-                res.status(400).send(e);
+                result = {
+                    result: r,
+                    responseMessage: 'عملیات با موفقیت انجام شد',
+                    responseCode: 0
+                };
+                res.send(result);
+            }).catch((e: Error) => {
+                result = {result: e.name, responseMessage: e.message, responseCode: 400};
+                res.status(400).send(result);
             })
         })
     }
 
     private fetch = () => {
-        this.app.get('/fetchaction', (req, res) => {
+        this.router.get('/fetch', (req, res) => {
+            let result: ResultModel;
             if (!ObjectId.isValid(req.query['_id'] as string)) {
                 res.status(400).send();
             }
             this.actionMongooseController.read(req.query).then(r => {
-                res.send(r);
-            }).catch(e => {
-                res.status(400).send(e);
+                result = {
+                    result: r,
+                    responseMessage: 'عملیات با موفقیت انجام شد',
+                    responseCode: 0
+                };
+                res.send(result);
+            }).catch((e: Error) => {
+                result = {result: e.name, responseMessage: e.message, responseCode: 400};
+                res.status(400).send(result);
             })
         })
     }
 
     private insert = () => {
-        this.app.post('/insertaction', (req, res) => {
+        this.router.post('/insert', (req, res) => {
+            let result: ResultModel;
             this.actionMongooseController.create(req.body).then(r => {
-                res.send(r);
-            }).catch(e => {
-                res.status(400).send(e);
+                result = {
+                    result: r,
+                    responseMessage: 'عملیات با موفقیت انجام شد',
+                    responseCode: 0
+                };
+                res.send(result);
+            }).catch((e: Error) => {
+                result = {result: e.name, responseMessage: e.message, responseCode: 400};
+                res.status(400).send(result);
             })
         })
     }
 
     private update = () => {
-        this.app.patch('/updateaction', (req, res) => {
+        this.router.patch('/update', (req, res) => {
+            let result: ResultModel;
             if (!ObjectId.isValid(req.body._id)) {
-                res.status(400).send();
+                result = {result: 'id error', responseMessage: 'id is invalid', responseCode: 400};
+                res.status(400).send(result);
+            } else {
+                this.actionMongooseController.update(req.body).then(r => {
+                    result = {
+                        result: r,
+                        responseMessage: 'عملیات با موفقیت انجام شد',
+                        responseCode: 0
+                    };
+                    res.send(result);
+                }).catch((e: Error) => {
+                    result = {result: e.name, responseMessage: e.message, responseCode: 400};
+                    res.status(400).send(result);
+                })
             }
-            this.actionMongooseController.update(req.body).then(r => {
-                res.send(r);
-            }).catch(e => {
-                res.status(400).send(e);
-            })
         })
     }
 
     private delete = () => {
-        this.app.delete('/deleteaction/:id', (req, res) => {
+        this.router.delete('/delete/:id', (req, res) => {
+            let result: ResultModel;
             const id = req.params.id;
             if (!ObjectId.isValid(id)) {
-                res.status(400).send();
+                result = {result: 'id error', responseMessage: 'id is invalid', responseCode: 400};
+                res.status(400).send(result);
+            } else {
+                this.actionMongooseController.delete(new ObjectId(id)).then(r => {
+                    result = {
+                        result: r,
+                        responseMessage: 'عملیات با موفقیت انجام شد',
+                        responseCode: 0
+                    };
+                }).catch((e: Error) => {
+                    result = {result: e.name, responseMessage: e.message, responseCode: 400};
+                    res.status(400).send(result);
+                })
             }
-            this.actionMongooseController.delete(new ObjectId(id)).then(r => {
-                res.send(r);
-            }).catch(e => {
-                res.status(400).send(e);
-            })
         })
     }
 

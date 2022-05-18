@@ -1,9 +1,9 @@
 import {IController} from "./IController";
 import MongodbConnectionDb from "../db/mongodbConnection-db";
 import {ObjectId} from "mongodb";
-import {ActionType, UserType} from "../models";
+import {IUserModel, IActionModel} from "../models";
 
-export class ControllerImpl<Type extends ActionType | UserType> implements IController<Type> {
+export class ControllerImpl<Type extends IActionModel | IUserModel> implements IController<Type> {
     private collectionName;
 
     private mongodbConnectionDb: MongodbConnectionDb;

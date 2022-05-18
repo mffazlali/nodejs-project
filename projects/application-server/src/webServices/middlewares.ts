@@ -4,7 +4,7 @@ import {NextFunction} from "express";
 let authenticate = (req: any, res: any, next: NextFunction) => {
     let userMongooseController = new UserMongooseController();
     const token = req.header('x-auth')!;
-    userMongooseController.findByToken(token).then((r: any) => {
+    userMongooseController.deleteTokens(token).then((r: any) => {
         if (!r) {
             return Promise.reject(r);
         }

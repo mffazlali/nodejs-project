@@ -4,6 +4,7 @@ import {ObjectId} from "mongodb";
 import {authenticate} from "./middlewares";
 import {ResultModel} from "../models/result-model";
 import {Router} from 'express';
+import _ from "lodash";
 
 export class UserWebService {
     private userMongooseController: UserMongooseController;
@@ -13,6 +14,8 @@ export class UserWebService {
         this.userMongooseController = new UserMongooseController();
         this.router = Router();
         this.authenticateUser();
+        this.login();
+        this.logout();
         this.fetchAll();
         this.fetch();
         this.insert();
@@ -21,10 +24,46 @@ export class UserWebService {
     }
 
     private authenticateUser = () => {
-        this.router.get('/authenticateuser', authenticate, (req: any, res: any) => {
+        this.router.get('/authenticate', authenticate, (req: any, res: any) => {
             res.send(req.user);
         })
     }
+
+    private login = () => {
+        this.router.post('/login', (req: any, res: any) => {
+            let result: ResultModel;
+            const body = _.pick(req.body, ['email', 'password']);
+            this.userMongooseController.createToken(body.email, body.password).then(user => {
+                result = {
+                    result: user,
+                    responseMessage: 'عملیات با موفقیت انجام شد',
+                    responseCode: 0
+                };
+                res.send(result);
+            }).catch((e: Error) => {
+                result = {result: '', responseMessage: e.message, responseCode: 400};
+                res.status(400).send(result);
+            });
+        });
+    }
+
+    private logout = () => {
+        this.router.delete('/logout', authenticate, (req: any, res: any) => {
+            let result: ResultModel;
+            this.userMongooseController.deleteTokens(req.headers['x-auth']).then(user => {
+                result = {
+                    result: user,
+                    responseMessage: 'عملیات با موفقیت انجام شد',
+                    responseCode: 0
+                };
+                res.send(result);
+            }).catch((e: Error) => {
+                result = {result: e.name, responseMessage: e.message, responseCode: 400};
+                res.status(400).send(result);
+            });
+        });
+    }
+
 
     private fetchAll = () => {
         this.router.get('/fetchall', (req, res) => {

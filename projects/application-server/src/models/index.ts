@@ -1,3 +1,3 @@
-export * from './action-type';
-export * from './user-type';
-export * from './schema-object';
+export * from './action-model';
+export * from './user-model';
+export * from './schemas-model';

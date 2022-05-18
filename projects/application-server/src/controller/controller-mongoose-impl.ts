@@ -1,26 +1,26 @@
 import {IController} from "./IController";
-import {ActionType, entitySchema, UserType} from "../models";
-import {mongoose, MongooseConnectionDb} from "../db/mongooseConnection-db";
-import {Model, Schema} from "mongoose";
+import {IActionModel, IUserMethods, IUserModel, IUserStatics, SchemasModel} from "../models";
+import {MongooseConnectionDb} from "../db/mongooseConnection-db";
+import {model} from 'mongoose'
 import {ObjectId} from "mongodb";
-import {ResultModel} from "../models/result-model";
 
-export class ControllerMongooseImpl<Type extends ActionType | UserType> implements IController<Type> {
+export class ControllerMongooseImpl<Type extends IActionModel | IUserModel, Methods extends IUserMethods, Statics extends IUserStatics> implements IController<Type> {
     private readonly collectionName: string;
 
     protected mongooseConnectionDb: MongooseConnectionDb;
 
-    protected readonly entityModel: Model<unknown, unknown, any, unknown>;
+    protected entityModel;
 
     constructor(collectionName: string) {
-        let schemaObjectTemp: any = entitySchema;
+        const schemasModel: any = SchemasModel;
         this.mongooseConnectionDb = MongooseConnectionDb.getInstance('TodoApp');
         this.collectionName = collectionName;
-        if (!mongoose.models[this.collectionName]) {
-            this.entityModel = mongoose.model(this.collectionName, schemaObjectTemp[this.collectionName]);
-        } else {
-            this.entityModel = mongoose.models[this.collectionName]
-        }
+        this.entityModel = model<Type, Statics, Methods>(this.collectionName, schemasModel[this.collectionName]);
+        // if (!mongoose.models[this.collectionName]) {
+        //     this.entityModel = model<Type,Statics,Methods>(this.collectionName, schemasModel[this.collectionName]);
+        // } else {
+        //     this.entityModel = models[this.collectionName] as Model<Type,Statics,Methods>
+        // }
     }
 
     readAll = async () => {
@@ -65,6 +65,5 @@ export class ControllerMongooseImpl<Type extends ActionType | UserType> implemen
         await this.mongooseConnectionDb.close();
         return result;
     }
-
 
 }

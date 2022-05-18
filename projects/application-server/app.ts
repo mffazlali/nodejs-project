@@ -1,17 +1,16 @@
 // import {ActionController, UserController} from './src/controller'
-// import {ActionType, UserType} from "./src/models";
+// import {ActionType, UserModel} from "./src/models";
 import {serverService} from './src/services'
 import express from "express";
 import crypto from 'crypto-js';
 import jwt from 'jsonwebtoken';
 import {has} from "lodash";
-import {ActionType, UserType} from "./src/models";
 import {ActionController, UserController} from "./src/controller";
 
 let appExpress = express();
 
 let app = async () => {
-    // let userData: UserType = {email: 'abc@gmail.com', password: '894567', tokens: [{access: 'auth', token: '123'}]}
+    // let userData: UserModel = {email: 'abc@gmail.com', password: '894567', tokens: [{access: 'auth', token: '123'}]}
     // let actionData: ActionType = {completed: false, text: 'swim'}
     // let actionController = new ActionController();
     // let userController = new UserController();

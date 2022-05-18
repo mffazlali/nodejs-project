@@ -1,7 +1,7 @@
-import {ActionType} from "../models";
+import {IActionModel} from "../models";
 import {ControllerMongooseImpl} from "./controller-mongoose-impl";
 
-export class ActionMongooseController extends ControllerMongooseImpl<ActionType> {
+export class ActionMongooseController extends ControllerMongooseImpl<IActionModel, any, any> {
     constructor() {
         super('Action');
     }

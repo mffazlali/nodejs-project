@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import {ActionWebService, UserWebService} from "../webServices";
-import {Express, RequestHandler} from "express";
+import {Express} from "express";
 
 let serverService = (app: Express) => {
     dotenv.config();

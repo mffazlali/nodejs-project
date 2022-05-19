@@ -1,12 +1,6 @@
 import {ObjectId} from "mongodb";
 import {Schema} from "mongoose";
 
-export interface IActionModel {
-    _id?: ObjectId,
-    text: string,
-    completed: boolean,
-}
-
 export let ActionSchema = new Schema<IActionModel>({
     text: {
         type: String,
@@ -19,4 +13,11 @@ export let ActionSchema = new Schema<IActionModel>({
         required: true,
         default: false,
     }
-})
+});
+
+export interface IActionModel {
+    _id?: ObjectId,
+    text: string,
+    completed: boolean,
+}
+

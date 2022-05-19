@@ -4,29 +4,6 @@ import bcryptjs from "bcryptjs";
 import validator from "validator";
 import {Model, Schema, HydratedDocument} from "mongoose";
 
-
-export interface IUserModel {
-    _id?: ObjectId;
-    email: string;
-    password: string;
-    tokens: [{
-        access: string,
-        token: string
-    }],
-}
-
-export interface IUserMethods {
-    generateAuthToken(): Promise<any>;
-
-    removeTokens(token: string): Promise<HydratedDocument<IUserModel, IUserMethods>>;
-}
-
-export interface IUserStatics extends Model<IUserModel, any, IUserMethods> {
-    findByCredentials(email: string, password: string): Promise<HydratedDocument<IUserModel, IUserMethods>>;
-
-    findByToken(token: string): Promise<HydratedDocument<IUserModel, IUserMethods>>;
-}
-
 export let UserSchema = new Schema<IUserModel, IUserStatics, IUserMethods>({
     email: {
         type: String,
@@ -55,8 +32,32 @@ export let UserSchema = new Schema<IUserModel, IUserStatics, IUserMethods>({
             required: true
         }
     }],
-})
+});
 
+export interface IUserModel {
+    _id?: ObjectId;
+    email: string;
+    password: string;
+    tokens: [{
+        access: string,
+        token: string
+    }],
+}
+
+export interface IUserMethods {
+    generateAuthToken(): Promise<any>;
+
+    removeTokens(token: string): Promise<HydratedDocument<IUserModel, IUserMethods>>;
+}
+
+export interface IUserStatics extends Model<IUserModel, any, IUserMethods> {
+    findByCredentials(email: string, password: string): Promise<HydratedDocument<IUserModel, IUserMethods>>;
+
+    findByToken(token: string): Promise<HydratedDocument<IUserModel, IUserMethods>>;
+}
+
+
+// pre
 UserSchema.pre('save', function (next) {
     let user = this;
     if (user.isModified('password')) {
@@ -85,11 +86,11 @@ UserSchema.method('generateAuthToken', function generateAuthToken() {
 
 UserSchema.method('removeTokens', function removeTokens(token) {
     let user = this;
-    return user.findOneAndUpdate({
-        $pull: {
-            tokens: {token}
-        }
-    })
+    return user.update({$pull: {tokens: {token}}}).then((rs: any) => {
+        return rs.modifiedCount == 1 ? Promise.resolve(user) : Promise.resolve(new Error(''));
+    }).catch((err: Error) => {
+        return Promise.reject(err);
+    });
 });
 
 
@@ -105,7 +106,7 @@ UserSchema.static('findByCredentials', function findByCredentials(email: string,
                 if (res) {
                     resolve(user)
                 } else {
-                    reject('value is not found');
+                    reject(new Error('value is not found'));
                 }
             })
         })
@@ -117,12 +118,17 @@ UserSchema.static('findByToken', function findByToken(token: string) {
     let decoded: any;
     try {
         decoded = jwt.verify(token, 'ehsan');
-    } catch (e) {
-
+    } catch (err) {
+        return Promise.reject(err);
     }
     return User.findOne({
-        '_id': decoded?._id,
+        '_id': new ObjectId(decoded._id),
         'tokens.token': token,
         'tokens.access': 'auth'
+    }).then((user: any) => {
+        if (!user) {
+            return Promise.reject(new Error('token not found'));
+        }
+        return Promise.resolve(user);
     })
 });

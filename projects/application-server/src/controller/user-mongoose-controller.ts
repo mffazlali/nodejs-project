@@ -1,7 +1,6 @@
 import {ControllerMongooseImpl} from "./controller-mongoose-impl";
 import {IUserMethods, IUserModel, IUserStatics} from "../models";
 import _ from "lodash";
-import jwt from "jsonwebtoken";
 
 export class UserMongooseController extends ControllerMongooseImpl<IUserModel, IUserMethods, IUserStatics> {
     constructor() {
@@ -26,19 +25,16 @@ export class UserMongooseController extends ControllerMongooseImpl<IUserModel, I
         return result;
     }
 
-    readByToken = (token: string) => {
-        return this.entityModel.findByToken(token);
+    readByToken = async (token: string) => {
+        await this.mongooseConnectionDb.connect()
+        const result = await this.entityModel.findByToken(token);
+        await this.mongooseConnectionDb.close();
+        return result;
     }
 
-    deleteTokens = async (token: string) => {
+    deleteTokens = async (token: string, user: any) => {
         await this.mongooseConnectionDb.connect()
-        const result = await this.entityModel.findByToken(token).then(user => {
-            if (!user) {
-                return Promise.reject(new Error('token is not found'));
-            }
-            console.log('u',user)
-            return user.removeTokens(token);
-        })
+        const result = await user.removeTokens(token);
         await this.mongooseConnectionDb.close();
         return result;
     }

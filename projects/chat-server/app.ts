@@ -10,3 +10,4 @@ let app = () => {
 app();
 
 export default {app: app}
+export {appExpress};

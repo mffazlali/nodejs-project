@@ -1,9 +1,9 @@
 import {IController} from "./";
 import {UserModel, MessageModel, SchemasModel} from "../models";
 import {MongooseConnectionDb} from "../db/mongooseConnection-db";
-import {model} from 'mongoose'
+import {model} from 'mongoose';
 
-export class ControllerMongooseImpl<Type extends UserModel | MessageModel> implements IController<Type> {
+export class ControllerImpl<Type extends UserModel | MessageModel> implements IController<Type> {
     private readonly collectionName: string;
 
     protected mongooseConnectionDb: MongooseConnectionDb;
@@ -14,7 +14,13 @@ export class ControllerMongooseImpl<Type extends UserModel | MessageModel> imple
         const schemasModel: any = SchemasModel;
         this.mongooseConnectionDb = MongooseConnectionDb.getInstance('TodoApp');
         this.collectionName = collectionName;
+        // const entityModelTemp = mongoose.model<Type>(this.collectionName)
+        // if (entityModelTemp)
+        //     this.entityModel = entityModelTemp
+        // else
+        //     this.entityModel = model<Type>(this.collectionName, schemasModel[this.collectionName]);
         this.entityModel = model<Type>(this.collectionName, schemasModel[this.collectionName]);
+
     }
 
     readAll = async () => {

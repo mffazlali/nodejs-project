@@ -4,20 +4,24 @@ export let UserSchema = new Schema<UserModel>({
     id: {
         type: String,
         required: true,
+        minlength: 11,
     },
     name: {
         type: String,
         required: true,
-        trim: true,
     },
-    room: {
+    password: {
         type: String,
         required: true,
-        trim: true,
     },
+    status: {
+        type: Number,
+        default: 1,
+    }
 });
 
+
 export class UserModel {
-    constructor(public id: string, public name: string, public room: string) {
+    constructor(public id: string, public name: string, public password: String, public status?: number) {
     }
 }

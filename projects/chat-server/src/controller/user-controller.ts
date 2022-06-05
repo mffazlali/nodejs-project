@@ -1,44 +1,26 @@
 import {UserModel} from "../models";
-import {ControllerMongooseImpl} from "./";
+import {ControllerImpl} from "./controller-impl";
 
-export class UserController extends ControllerMongooseImpl<UserModel> {
-
+export class UserController extends ControllerImpl<UserModel> {
     constructor() {
         super('User');
     }
 
-    readAllByRoom = async (room: string) => {
+    readByUser_PASS = async (user: any) => {
         await this.mongooseConnectionDb.connect()
-        const result = await this.entityModel.find({room});
+        const result = await this.entityModel.findOne({name: user.name, password: user.password});
         await this.mongooseConnectionDb.close();
-        return (result as unknown as UserModel[]);
+        return result;
     }
 
-    // public users: UserModel[];
-    //
-    // constructor() {
-    //     this.users = [];
-    // }
-    //
-    // getAllByRoom = (room: string) => {
-    //     return this.users.filter(user => user.room === room);
-    //     // return users.map(user => user.name);
-    // }
-    //
-    // getById = (id: string) => {
-    //     return this.users.filter(user => user.id === id)[0]
-    // }
-    //
-    // add = (user: UserModel) => {
-    //     this.users.push(user);
-    //     return user;
-    // }
-    //
-    // remove(id: string) {
-    //     let user = this.getById(id);
-    //     if (user) {
-    //         this.users = this.users.filter(user => user.id !== id);
-    //     }
-    //     return user;
-    // }
+    updateStatus = async (user: UserModel) => {
+        await this.mongooseConnectionDb.connect()
+        const result = await this.entityModel.findOneAndUpdate({id: user.id}, {$set: {status: user.status}}, {new: true});
+        await this.mongooseConnectionDb.close();
+        return result;
+    }
+
 }
+
+
+

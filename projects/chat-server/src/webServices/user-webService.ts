@@ -107,7 +107,7 @@ export class UserWebService {
     }
 
     private updateStatus = () => {
-        this.router.patch('/updatestatus', (req, res) => {
+        this.router.post('/updatestatus', (req, res) => {
             let result: ResultModel;
             this.userController.updateStatus(req.body).then(rs => {
                 result = {

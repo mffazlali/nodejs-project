@@ -7,7 +7,7 @@ export class UserSocketIO extends SocketIO {
     private user: UserModel = new UserModel('', '', '');
 
     login = () => {
-        this.socketIO.socket.on('login', async (params: UserModel, callback: any) => {
+        this.socketIO.socket.on('login', async (params: UserModel) => {
             this.user = params;
             params.status = 1
             await this.userController.updateStatus(params)
@@ -25,17 +25,15 @@ export class UserSocketIO extends SocketIO {
                 this.socketIO.io.to(this.socketIO.socket.id).emit('messages', [new MessageModel(params.id, 'مدیر', `به وب چت خوش آمدید`, moment().valueOf())]);
                 this.socketIO.socket.broadcast.to(usersId).emit('messages', [new MessageModel(params.id, 'مدیر', `${params.name} اضافه شد`, moment().valueOf())]);
             }
-            callback();
         })
     }
 
     logout = () => {
         this.socketIO.socket.on('logout', async (user: UserModel) => {
-            user.status = 2;
-            await this.userController.updateStatus(this.user);
             let users = await this.userController.readAll();
-            this.socketIO.io.to(this.socketIO.socket.id).emit('users', users);
-            this.socketIO.io.to(this.socketIO.socket.id).emit('messages', new MessageModel(this.socketIO.socket.id, 'مدیر', `${user.name} ترک کرد!`, moment().valueOf()));
+            let usersId = users.map(user => user.id).filter(id => id !== user.id);
+            this.socketIO.socket.broadcast.to(usersId).emit('users', users);
+            this.socketIO.socket.broadcast.to(usersId).emit('newMessage', new MessageModel(this.socketIO.socket.id, 'مدیر', `${user.name} ترک کرد!`, moment().valueOf()));
         });
     }
 }
